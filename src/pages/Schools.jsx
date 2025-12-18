@@ -97,18 +97,18 @@ const Schools = () => {
     <div className="bg-gray-50 flex justify-center items-start min-h-screen">
       <div className="max-w-7xl w-full bg-white overflow-hidden flex flex-col h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-4 flex items-center justify-between border-b">
+        <div className="px-6 py-4 flex items-center justify-between ">
           <h2 className="text-xl font-semibold text-gray-900">Schools</h2>
           <button
             onClick={() => setShowModal(true)}
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+            className="rounded-md px-3 py-2 text-indigo-600 text-sm hover:text-indigo-900 hover:bg-indigo-500"
           >
             Add School
           </button>
         </div>
 
         {/* Search */}
-        <div className="p-6 border-b">
+        <div className="p-6 ">
           <div className="relative max-w-xs">
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
             <input
@@ -126,7 +126,7 @@ const Schools = () => {
 
         {/* Table */}
         <div className="overflow-auto flex-1">
-          <table className="min-w-full divide-y">
+          <table className="min-w-full">
             <thead className="bg-gray-50">
               <tr>
                 <th className="py-3.5 pl-6 text-left text-sm font-semibold">
@@ -143,7 +143,7 @@ const Schools = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y bg-white">
+            <tbody className=" bg-white">
               {loading && (
                 <tr>
                   <td colSpan="5" className="text-center py-6 text-sm">
@@ -199,7 +199,7 @@ const Schools = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between border-t px-4 py-3">
+        <div className="flex items-center justify-between  px-4 py-3">
           <p className="text-sm">
             Showing {filteredSchools.length ? startIndex + 1 : 0} to{" "}
             {Math.min(startIndex + usersPerPage, filteredSchools.length)} of{" "}

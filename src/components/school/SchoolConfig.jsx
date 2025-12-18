@@ -13,9 +13,9 @@ import StepInterface from "./steps/StepInterface";
  */
 const STEPS = [
   { id: "interface", label: "Interface", icon: Plug },
-  { id: "hotspot", label: "Hotspot", icon: Wifi },
   { id: "profiles", label: "Profiles", icon: Sliders },
-  { id: "aps", label: "Access Points", icon: WifiOff },
+  { id: "hotspot", label: "Hotspot", icon: Wifi },
+  // { id: "aps", label: "Access Points", icon: WifiOff },
   { id: "users", label: "Users", icon: Users },
   { id: "review", label: "Review", icon: Users },
 ];
@@ -49,17 +49,6 @@ export default function SchoolConfig({ school, onUpdate, onDone }) {
         }}
       />
     ),
-    hotspot: (
-      <StepHotspot
-        school={school}
-        onSave={(hotspot) => {
-          const updated = { hotspots: [...(school.hotspots || []), hotspot] };
-          onUpdate(updated);
-          markDone("hotspot");
-        }}
-        disabled={!completed.interface}
-      />
-    ),
     profiles: (
       <StepProfiles
         school={school}
@@ -71,19 +60,32 @@ export default function SchoolConfig({ school, onUpdate, onDone }) {
         disabled={!completed.hotspot}
       />
     ),
-    aps: (
-      <StepAccessPoints
+
+    hotspot: (
+      <StepHotspot
         school={school}
-        onSave={(ap) => {
-          const updated = {
-            accessPoints: [...(school.accessPoints || []), ap],
-          };
+        onSave={(hotspot) => {
+          const updated = { hotspots: [...(school.hotspots || []), hotspot] };
           onUpdate(updated);
-          markDone("aps");
+          markDone("hotspot");
         }}
-        disabled={!completed.profiles}
+        disabled={!completed.interface}
       />
     ),
+
+    // aps: (
+    //   <StepAccessPoints
+    //     school={school}
+    //     onSave={(ap) => {
+    //       const updated = {
+    //         accessPoints: [...(school.accessPoints || []), ap],
+    //       };
+    //       onUpdate(updated);
+    //       markDone("aps");
+    //     }}
+    //     disabled={!completed.profiles}
+    //   />
+    // ),
     users: (
       <StepUsers
         school={school}
@@ -108,7 +110,7 @@ export default function SchoolConfig({ school, onUpdate, onDone }) {
             const locked =
               (s.id === "hotspot" && !completed.interface) ||
               (s.id === "profiles" && !completed.hotspot) ||
-              (s.id === "aps" && !completed.profiles) ||
+              // (s.id === "aps" && !completed.profiles) ||
               (s.id === "users" && !completed.aps) ||
               (s.id === "review" && !completed.users);
 
