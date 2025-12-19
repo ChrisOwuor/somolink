@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function StepProfiles({ school, onSave, disabled }) {
+export default function StepProfiles({  onSave, disabled }) {
   const [name, setName] = useState("");
   const [speed, setSpeed] = useState("");
   const [duration, setDuration] = useState("");

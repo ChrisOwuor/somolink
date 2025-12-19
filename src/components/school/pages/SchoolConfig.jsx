@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import AccessPointsCard from "../AccessPointsCard";
-import HotspotCard from "../HotspotCard";
-import PortConfigurationsCard from "../PortConfigurationsCard";
-import ProfilesCard from "../ProfilesCard";
+import AccessPointsCard from "../school config/AccessPointsCard";
+import HotspotCard from "../school config/HotspotCard";
+import PortConfigurationsCard from "../school config/PortConfigurationsCard";
+import ProfilesCard from "../school config/ProfilesCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import AddDevicesCard from "../school config/AddDevicesCard";
+import UsersCard from "../school config/UsersCard";
+import WLANCard from "../school config/WLANCard";
 
 export default function SchoolConfig({ school }) {
   const [openSections, setOpenSections] = useState({
@@ -11,6 +14,9 @@ export default function SchoolConfig({ school }) {
     hotspot: false,
     profiles: false,
     accessPoints: false,
+    devices: false,
+    users: false,
+    wlan: false
   });
 
   const toggleSection = (section) => {
@@ -33,7 +39,10 @@ export default function SchoolConfig({ school }) {
         </button>
         {openSections.networkCore && (
           <div className="p-4">
-            <PortConfigurationsCard bridgeConfig={school.bridgeConfiguration} />
+            <PortConfigurationsCard
+              bridgeConfig={school.bridgeConfiguration}
+              school={school}
+            />
           </div>
         )}
       </div>
@@ -82,6 +91,52 @@ export default function SchoolConfig({ school }) {
         {openSections.accessPoints && (
           <div className="p-4">
             <AccessPointsCard accessPoints={school.accessPoints} />
+          </div>
+        )}
+      </div>
+      {/* Add Devices */}
+      <div className="bg-white ">
+        <button
+          onClick={() => toggleSection("devices")}
+          className="w-full flex justify-between items-center px-4 py-3 text-left"
+        >
+          <span className="font-semibold text-gray-700">Add Devices</span>
+          {openSections.devices ? <ChevronUp /> : <ChevronDown />}
+        </button>
+        {openSections.devices && (
+          <div className="p-4">
+            <AddDevicesCard devices={school.devices} schoolId={school.id} />
+          </div>
+        )}
+      </div>
+
+      {/* Access Points */}
+      <div className="bg-white ">
+        <button
+          onClick={() => toggleSection("users")}
+          className="w-full flex justify-between items-center px-4 py-3 text-left"
+        >
+          <span className="font-semibold text-gray-700">Users</span>
+          {openSections.users ? <ChevronUp /> : <ChevronDown />}
+        </button>
+        {openSections.users && (
+          <div className="p-4">
+            <UsersCard users={school.users} schoolId={school.id} />
+          </div>
+        )}
+      </div>
+      {/* Access Points */}
+      <div className="bg-white ">
+        <button
+          onClick={() => toggleSection("wlan")}
+          className="w-full flex justify-between items-center px-4 py-3 text-left"
+        >
+          <span className="font-semibold text-gray-700">WLAN</span>
+          {openSections.wlan ? <ChevronUp /> : <ChevronDown />}
+        </button>
+        {openSections.wlan && (
+          <div className="p-4">
+            <WLANCard wlan={school.wlan} />
           </div>
         )}
       </div>

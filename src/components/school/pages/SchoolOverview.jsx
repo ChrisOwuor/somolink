@@ -1,7 +1,6 @@
-import AccessPointsCard from "../AccessPointsCard";
-import DevicesCard from "../DevicesCard";
-import HotspotCard from "../HotspotCard";
-
+import AccessPointsCard from "../school config/AccessPointsCard";
+import DevicesCard from "../school config/DevicesCard";
+import HotspotCard from "../school config/HotspotCard";
 
 export default function SchoolOverview({ school }) {
   return (

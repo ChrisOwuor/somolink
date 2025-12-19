@@ -48,20 +48,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </NavLink>
 
           <NavLink
-            to="/hotspots"
+            to="/settings"
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
-            Hotspots
+            Settings
           </NavLink>
 
-          <NavLink
-            to="/ports"
-            className={linkClass}
-            onClick={() => setSidebarOpen(false)}
-          >
-            Ports
-          </NavLink>
+         
         </nav>
 
         {/* USER PROFILE - FIXED AT THE VERY BOTTOM */}

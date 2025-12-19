@@ -1,4 +1,4 @@
-import TrafficCard from "../TrafficCard";
+import TrafficCard from "../school monitoring cards/TrafficCard";
 
 export default function SchoolMonitoring({ school }) {
   return (

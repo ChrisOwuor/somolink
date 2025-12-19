@@ -7,6 +7,7 @@ import Hotspots from "./pages/Hotspots";
 import Ports from "./pages/Ports";
 import SchoolPage from "./pages/SchoolPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import Settings from "./pages/Settings";
 
 const schoolData = {
   id: 6,
@@ -55,7 +56,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/schools" element={<Schools />} />
-              <Route path="/hotspots" element={<Hotspots />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/ports" element={<Ports />} />
               <Route
                 path="/school/:id"
