@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import AccessPointsCard from "../school config/AccessPointsCard";
 import HotspotCard from "../school config/HotspotCard";
 import PortConfigurationsCard from "../school config/PortConfigurationsCard";
-import ProfilesCard from "../school config/ProfilesCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import AddDevicesCard from "../school config/AddDevicesCard";
 import UsersCard from "../school config/UsersCard";
@@ -16,7 +15,7 @@ export default function SchoolConfig({ school }) {
     accessPoints: false,
     devices: false,
     users: false,
-    wlan: false
+    wlan: false,
   });
 
   const toggleSection = (section) => {
@@ -47,21 +46,7 @@ export default function SchoolConfig({ school }) {
         )}
       </div>
 
-      {/* Server Profile */}
-      <div className="bg-white ">
-        <button
-          onClick={() => toggleSection("profiles")}
-          className="w-full flex justify-between items-center px-4 py-3 text-left"
-        >
-          <span className="font-semibold text-gray-700">Server Profile</span>
-          {openSections.profiles ? <ChevronUp /> : <ChevronDown />}
-        </button>
-        {openSections.profiles && (
-          <div className="p-4">
-            <ProfilesCard profiles={school.profiles} />
-          </div>
-        )}
-      </div>
+
 
       {/* Hotspot */}
       <div className="bg-white ">
@@ -80,7 +65,7 @@ export default function SchoolConfig({ school }) {
       </div>
 
       {/* Access Points */}
-      <div className="bg-white ">
+      {/* <div className="bg-white ">
         <button
           onClick={() => toggleSection("accessPoints")}
           className="w-full flex justify-between items-center px-4 py-3 text-left"
@@ -93,7 +78,7 @@ export default function SchoolConfig({ school }) {
             <AccessPointsCard accessPoints={school.accessPoints} />
           </div>
         )}
-      </div>
+      </div> */}
       {/* Add Devices */}
       <div className="bg-white ">
         <button
@@ -136,7 +121,7 @@ export default function SchoolConfig({ school }) {
         </button>
         {openSections.wlan && (
           <div className="p-4">
-            <WLANCard wlan={school.wlan} />
+            <WLANCard wlan={school.openWlan} schoolId={school.id} />
           </div>
         )}
       </div>

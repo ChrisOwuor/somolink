@@ -32,7 +32,7 @@ export default function SchoolPage() {
           profiles: data.profiles ?? [],
           metrics: data.metrics ?? {},
           alerts: data.alerts ?? [],
-          wlan: data.wlan ?? [],
+          openWlan: data.openWlan ?? [],
         });
       } finally {
         setLoading(false);
