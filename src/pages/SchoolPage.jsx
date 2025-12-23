@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import SchoolOverview from "../components/school/pages/SchoolOverview";
-import SchoolMonitoring from "../components/school/pages/SchoolMonitoring";
-import SchoolConfig from "../components/school/pages/SchoolConfig";
+import { useParams, useNavigate, NavLink, Outlet } from "react-router-dom";
 import { ArrowLeft, MapPin, Hash, Activity } from "lucide-react";
+import { useSchool } from "../context/SchoolContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,9 +9,8 @@ export default function SchoolPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [school, setSchool] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
+  const { school, setSchool } = useSchool();
 
   useEffect(() => {
     const fetchSchool = async () => {
@@ -27,11 +24,6 @@ export default function SchoolPage() {
           ...data,
           devices: data.devices ?? [],
           users: data.users ?? [],
-          accessPoints: data.accessPoints ?? [],
-          hotspots: data.hotspots ?? [],
-          profiles: data.profiles ?? [],
-          metrics: data.metrics ?? {},
-          alerts: data.alerts ?? [],
           openWlan: data.openWlan ?? [],
         });
       } finally {
@@ -40,7 +32,7 @@ export default function SchoolPage() {
     };
 
     fetchSchool();
-  }, [id]);
+  }, [id, setSchool]);
 
   if (loading) return <div className="p-6">Loading school...</div>;
   if (!school) return <div className="p-6">School not found</div>;
@@ -48,7 +40,7 @@ export default function SchoolPage() {
   return (
     <div className="h-[calc(100vh-4rem)] bg-gray-50 overflow-hidden">
       <div className="h-full max-w-7xl mx-auto px-6 flex flex-col">
-        {/* ================= FIXED HEADER ================= */}
+        {/* ================= HEADER ================= */}
         <div className="shrink-0 pt-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             {/* LEFT */}
@@ -64,35 +56,16 @@ export default function SchoolPage() {
               </div>
 
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">
-                  {school.name}
-                </h1>
+                <h1 className="text-2xl font-semibold">{school.name}</h1>
 
                 <div className="flex gap-4 mt-1 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
-                    <Hash size={14} />
-                    {school.code}
+                    <Hash size={14} /> {school.code}
                   </span>
                   <span className="flex items-center gap-1">
-                    <MapPin size={14} />
-                    {school.location}
+                    <MapPin size={14} /> {school.location}
                   </span>
                 </div>
-
-                <span
-                  className={`inline-flex items-center gap-2 mt-2 text-xs font-medium px-2.5 py-1 rounded-full ${
-                    school.active
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-full ${
-                      school.active ? "bg-green-600" : "bg-red-600"
-                    }`}
-                  />
-                  {school.active ? "Active" : "Inactive"}
-                </span>
               </div>
             </div>
 
@@ -106,36 +79,31 @@ export default function SchoolPage() {
             </button>
           </div>
 
-          {/* ================= FIXED TABS ================= */}
-          <div className="mt-6 ">
-            <nav className="flex gap-6">
-              {["overview", "monitoring", "config"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-3 text-sm capitalize ${
-                    activeTab === tab
+          {/* ================= NAV TABS ================= */}
+          <nav className="mt-6 flex gap-6">
+            {["overview", "monitoring", "configuration", "users","devices", "wlan", "hotspot"].map((tab) => (
+              <NavLink
+                key={tab}
+                to={`/school/${id}/${tab}`}
+                className={({ isActive }) =>
+                  `pb-3 text-sm capitalize ${
+                    isActive
                       ? "border-b-2 border-indigo-600 text-indigo-600"
                       : "text-gray-600"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </nav>
-          </div>
+                  }`
+                }
+              >
+                {tab}
+              </NavLink>
+            ))}
+          </nav>
         </div>
 
-        {/* ================= SCROLLABLE CONTENT ================= */}
+        {/* ================= PAGE CONTENT ================= */}
         <div className="flex-1 overflow-y-auto py-6">
-          {activeTab === "overview" && <SchoolOverview school={school} />}
-          {activeTab === "monitoring" && <SchoolMonitoring school={school} />}
-          {activeTab === "config" && (
-            <SchoolConfig school={school} onUpdate={setSchool} />
-          )}
+          <Outlet />
         </div>
       </div>
     </div>
   );
 }
-

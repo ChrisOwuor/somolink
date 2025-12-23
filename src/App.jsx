@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import AppProviders from "./context/AppProviders";
 
 import AppLayout from "./layouts/AppLayout";
@@ -10,25 +15,45 @@ import Ports from "./pages/Ports";
 import Settings from "./pages/Settings";
 import SchoolPage from "./pages/SchoolPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import SchoolOverview from "./components/school/pages/SchoolOverview";
+import SchoolMonitoring from "./components/school/pages/SchoolMonitoring";
+import SchoolConfig from "./components/school/pages/SchoolConfig";
+import SchoolDevices from "./components/school/pages/SchoolDevices";
+import SchoolUsers from "./components/school/pages/SchoolUsers";
+import OpenWlan from "./components/school/pages/OpenWlan";
+import Hotspot from "./components/school/pages/Hotspot";
+import NetworkConfiguration from "./components/school/pages/NetworkConfiguration";
+
 
 export default function App() {
   return (
     <AppProviders>
       <Router>
         <Routes>
-          {/* ===== AUTH ROUTES (NO SIDEBAR) ===== */}
+          {/* AUTH */}
           <Route path="/login" element={<Login />} />
 
-          {/* ===== APP ROUTES (WITH SIDEBAR) ===== */}
+          {/* APP */}
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/schools" element={<Schools />} />
             <Route path="/ports" element={<Ports />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/school/:id" element={<SchoolPage />} />
             <Route path="/profile" element={<UserProfilePage />} />
+
+            {/* SCHOOL NESTED ROUTES */}
+            <Route path="/school/:id" element={<SchoolPage />}>
+              <Route index element={<Navigate to="overview" replace />} />
+
+              <Route index path="overview" element={<SchoolOverview />} />
+              <Route path="monitoring" element={<SchoolMonitoring />} />
+              <Route path="configuration" element={<NetworkConfiguration />} />
+              <Route path="users" element={<SchoolUsers />} />
+              <Route path="devices" element={<SchoolDevices />} />
+              <Route path="wlan" element={<OpenWlan />} />
+              <Route path="hotspot" element={<Hotspot />} />
+            </Route>
           </Route>
-          
         </Routes>
       </Router>
     </AppProviders>

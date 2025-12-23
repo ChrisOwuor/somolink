@@ -1,8 +1,10 @@
+import { useSchool } from "../../../context/SchoolContext";
 import AccessPointsCard from "../school config/AccessPointsCard";
 import DevicesCard from "../school config/DevicesCard";
 import HotspotCard from "../school config/HotspotCard";
 
-export default function SchoolOverview({ school }) {
+export default function SchoolOverview() {
+  const { school } = useSchool();
   return (
     <div className="space-y-8">
       <section>

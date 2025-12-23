@@ -1,11 +1,14 @@
 import React from "react";
 import { AuthProvider } from "./AuthContext";
 import { UserProvider } from "./UserContext";
+import { SchoolProvider } from "./SchoolContext";
 
 
 const AppProviders = ({ children }) => (
   <AuthProvider>
-    <UserProvider>{children}</UserProvider>
+    <UserProvider>
+      <SchoolProvider>{children}</SchoolProvider>
+    </UserProvider>
   </AuthProvider>
 );
 

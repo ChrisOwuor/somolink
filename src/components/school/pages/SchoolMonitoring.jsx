@@ -1,16 +1,17 @@
 import TrafficCard from "../school monitoring cards/TrafficCard";
 
-export default function SchoolMonitoring({ school }) {
+export default function SchoolMonitoring() {
+ 
   return (
     <div className="space-y-8">
       <section>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">
           Network Traffic
         </h2>
-        <TrafficCard metrics={school.metrics} />
+        <TrafficCard metrics={90} />
       </section>
 
-      <section>
+      {/* <section>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">Alerts</h2>
         <div className="bg-white border rounded p-4">
           {school.alerts.length === 0 ? (
@@ -23,7 +24,7 @@ export default function SchoolMonitoring({ school }) {
             ))
           )}
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
