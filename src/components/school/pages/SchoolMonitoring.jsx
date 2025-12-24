@@ -1,30 +1,37 @@
+import React, { useEffect, useState } from "react";
 import TrafficCard from "../school monitoring cards/TrafficCard";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SchoolMonitoring() {
- 
+  const [metrics, setMetrics] = useState({});
+
+  useEffect(() => {
+    const iface = "ether1"; // replace with your bridge
+    const fetchTraffic = async () => {
+      try {
+        const res = await fetch(`${API_URL}/traffic/${iface}`);
+        const data = await res.json();
+        setMetrics(data);
+      } catch (err) {
+        console.error("Failed to fetch traffic:", err);
+      }
+    };
+
+    fetchTraffic(); // initial fetch
+    const interval = setInterval(fetchTraffic, 3000); // poll every 3s
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="space-y-8">
       <section>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">
           Network Traffic
         </h2>
-        <TrafficCard metrics={90} />
+        <TrafficCard metrics={metrics} />
       </section>
-
-      {/* <section>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Alerts</h2>
-        <div className="bg-white border rounded p-4">
-          {school.alerts.length === 0 ? (
-            <p className="text-sm text-gray-500">No active alerts</p>
-          ) : (
-            school.alerts.map((a) => (
-              <div key={a.id} className="text-sm text-red-600 border-b py-2">
-                {a.message}
-              </div>
-            ))
-          )}
-        </div>
-      </section> */}
     </div>
   );
 }

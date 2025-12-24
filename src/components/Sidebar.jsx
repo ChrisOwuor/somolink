@@ -1,21 +1,29 @@
 import { NavLink } from "react-router-dom";
-import { User } from "lucide-react";
+import { User, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { useUser } from "../context/UserContext";
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+  const { logout } = useAuth();
+  const { user } = useUser();
   const linkClass = ({ isActive }) =>
     `block py-3 px-6 rounded hover:bg-indigo-100 hover:text-indigo-700 transition ${
       isActive ? "bg-indigo-50 text-indigo-700 font-semibold" : "text-gray-700"
     }`;
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <>
-      {/* Overlay for small screens */}
+      {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden transition-opacity ${
           sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setSidebarOpen(false)}
-      ></div>
+      />
 
       {/* Sidebar */}
       <aside
@@ -29,7 +37,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           SomoLink
         </div>
 
-        {/* NAV LINKS - stay at top */}
+        {/* NAV */}
         <nav className="p-4 space-y-2 flex-1">
           <NavLink
             to="/"
@@ -46,6 +54,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           >
             Schools
           </NavLink>
+          <NavLink
+            to="/fianance"
+            className={linkClass}
+            onClick={() => setSidebarOpen(false)}
+          >
+            Finance
+          </NavLink>
 
           <NavLink
             to="/settings"
@@ -54,28 +69,34 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           >
             Settings
           </NavLink>
-
-         
         </nav>
 
-        {/* USER PROFILE - FIXED AT THE VERY BOTTOM */}
-        
-          <div className="p-5 flex items-center gap-3 mt-auto">
-            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-              <User className="w-5 h-5 text-gray-600" />
-            </div>
+        {/* USER + LOGOUT (BOTTOM) */}
+        {user && (
+          <div className="border-t border-gray-200 p-4 space-y-3">
+            {/* Profile */}
             <NavLink
               to="/profile"
-              className={linkClass}
+              className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-100"
               onClick={() => setSidebarOpen(false)}
             >
               <div className="leading-tight">
-                <p className="text-sm font-semibold">Chrispine Owuor</p>
-                <p className="text-xs text-gray-500">Admin</p>
-                <p className="text-xs text-gray-400">chris@somolink.com</p>
-              </div>{" "}
+                <p className="text-sm font-semibold">{user.username}</p>
+                <p className="text-xs text-gray-500">{user.role}</p>
+                <p className="text-xs text-gray-400">{user.email}</p>
+              </div>
             </NavLink>
-          </div>{" "}
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded hover:bg-red-50 transition"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Wifi } from "lucide-react";
 import Drawer from "../../common/Drawer";
 import { useSchool } from "../../../context/SchoolContext";
@@ -7,24 +7,40 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export default function OpenWlan() {
   const { school } = useSchool();
-  const schoolId = school ? school.id : null;
-    let wlan = school ? school.openWlan : [];
-    console.log({school});
-    
-    console.log({wlan});
-    
+  const schoolId = school?.id;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [wlanList, setWlanList] = useState([]);
+
   const [wlanInterface, setWlanInterface] = useState("");
   const [ssidName, setSsidName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /* ================= FETCH WLAN ================= */
+
+  useEffect(() => {
+    if (!schoolId) return;
+
+    const fetchWlan = async () => {
+      try {
+        const res = await fetch(`${API_URL}/network/wlan/${schoolId}`);
+        if (!res.ok) throw new Error("Failed to fetch WLANs");
+        setWlanList(await res.json());
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchWlan();
+  }, [schoolId]);
+
+  /* ================= SAVE WLAN ================= */
+
   const handleSave = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Simple required validation
     if (!wlanInterface.trim() || !ssidName.trim()) {
       setError("Both fields are required.");
       return;
@@ -37,6 +53,7 @@ export default function OpenWlan() {
 
     try {
       setLoading(true);
+
       const res = await fetch(`${API_URL}/network/wlan/setup/${schoolId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,7 +65,9 @@ export default function OpenWlan() {
         throw new Error(data.details || "Failed to configure WLAN");
       }
 
-      // Reset form
+      const newWlan = await res.json();
+
+      setWlanList((prev) => [...prev, newWlan]);
       setWlanInterface("");
       setSsidName("");
       setDrawerOpen(false);
@@ -60,14 +79,18 @@ export default function OpenWlan() {
     }
   };
 
+  /* ================= UI ================= */
+
   return (
     <>
       <div className="bg-white border border-gray-200 p-4 rounded">
+        {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Wifi className="w-4 h-4 text-gray-500" />
             <h3 className="text-sm font-semibold text-gray-700">WLAN</h3>
           </div>
+
           <button
             onClick={() => setDrawerOpen(true)}
             className="text-indigo-600 text-sm"
@@ -76,22 +99,32 @@ export default function OpenWlan() {
           </button>
         </div>
 
-        {wlan.length === 0 ? (
+        {/* WLAN List */}
+        {wlanList.length === 0 ? (
           <div className="text-gray-500 text-sm">No WLANs created.</div>
         ) : (
-          <ul className="space-y-2">
-            {wlan.map((w, index) => (
-              <li key={index} className="flex items-center justify-between">
+          <div className="space-y-3">
+            {wlanList.map((wlan, index) => (
+              <div
+                key={index}
+                className=" rounded p-3 flex justify-between items-center"
+              >
                 <div>
-                  <div className="text-sm font-medium">{w.ssidName}</div>
-                  <div className="text-xs text-gray-400">{w.wlanInterface}</div>
+                  <p className="text-sm font-medium text-gray-800">
+                    {wlan.ssidName}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Interface:{" "}
+                    <span className="font-mono">{wlan.wlanInterface}</span>
+                  </p>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
+      {/* Drawer */}
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -108,7 +141,6 @@ export default function OpenWlan() {
               onChange={(e) => setWlanInterface(e.target.value)}
               placeholder="e.g. wlan1"
               className="mt-1 w-full border-b border-gray-300 focus:outline-none py-2"
-              required
             />
           </div>
 
@@ -120,13 +152,12 @@ export default function OpenWlan() {
               type="text"
               value={ssidName}
               onChange={(e) => setSsidName(e.target.value)}
-              placeholder="SSID name"
+              placeholder="Somolink Wifi"
               className="mt-1 w-full border-b border-gray-300 focus:outline-none py-2"
-              required
             />
           </div>
 
-          {error && <div className="text-red-600 text-xs">{error}</div>}
+          {error && <p className="text-red-600 text-xs">{error}</p>}
 
           <button
             type="submit"

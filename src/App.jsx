@@ -15,6 +15,7 @@ import Ports from "./pages/Ports";
 import Settings from "./pages/Settings";
 import SchoolPage from "./pages/SchoolPage";
 import UserProfilePage from "./pages/UserProfilePage";
+
 import SchoolOverview from "./components/school/pages/SchoolOverview";
 import SchoolMonitoring from "./components/school/pages/SchoolMonitoring";
 import SchoolConfig from "./components/school/pages/SchoolConfig";
@@ -23,6 +24,7 @@ import SchoolUsers from "./components/school/pages/SchoolUsers";
 import OpenWlan from "./components/school/pages/OpenWlan";
 import Hotspot from "./components/school/pages/Hotspot";
 import NetworkConfiguration from "./components/school/pages/NetworkConfiguration";
+import PrivateRoute from "./utils/PrivateRoute";
 
 
 export default function App() {
@@ -30,28 +32,37 @@ export default function App() {
     <AppProviders>
       <Router>
         <Routes>
-          {/* AUTH */}
+          {/* ===== AUTH ===== */}
           <Route path="/login" element={<Login />} />
 
-          {/* APP */}
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/schools" element={<Schools />} />
-            <Route path="/ports" element={<Ports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<UserProfilePage />} />
+          {/* ===== PROTECTED APP ===== */}
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/profile" element={<UserProfilePage />} />
 
-            {/* SCHOOL NESTED ROUTES */}
-            <Route path="/school/:id" element={<SchoolPage />}>
-              <Route index element={<Navigate to="overview" replace />} />
+              {/* ISP ADMIN ONLY */}
+              <Route element={<PrivateRoute roles={["ISP_ADMIN"]} />}>
+                <Route path="/schools" element={<Schools />} />
+                <Route path="/ports" element={<Ports />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
 
-              <Route index path="overview" element={<SchoolOverview />} />
-              <Route path="monitoring" element={<SchoolMonitoring />} />
-              <Route path="configuration" element={<NetworkConfiguration />} />
-              <Route path="users" element={<SchoolUsers />} />
-              <Route path="devices" element={<SchoolDevices />} />
-              <Route path="wlan" element={<OpenWlan />} />
-              <Route path="hotspot" element={<Hotspot />} />
+              {/* SCHOOL ROUTES */}
+              <Route path="/school/:id" element={<SchoolPage />}>
+                <Route index element={<Navigate to="overview" replace />} />
+
+                <Route path="overview" element={<SchoolOverview />} />
+                <Route path="monitoring" element={<SchoolMonitoring />} />
+                <Route
+                  path="configuration"
+                  element={<NetworkConfiguration />}
+                />
+                <Route path="users" element={<SchoolUsers />} />
+                <Route path="devices" element={<SchoolDevices />} />
+                <Route path="wlan" element={<OpenWlan />} />
+                <Route path="hotspot" element={<Hotspot />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

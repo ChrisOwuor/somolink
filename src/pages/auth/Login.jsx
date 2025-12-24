@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, User, Activity } from "lucide-react";
+import { Lock, User } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { useAuth } from "../../context/AuthContext";
 
-
 const API_URL = import.meta.env.VITE_API_URL;
+
+// 🔹 JWT decode helper (inline to avoid broken imports)
+const decodeJwt = (token) => {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  return JSON.parse(atob(base64));
+};
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,18 +33,31 @@ export default function Login() {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
 
       if (!res.ok) throw new Error("Invalid credentials");
 
       const data = await res.json();
 
-      // expected: { token, user }
-      login(data.token);
-      setUserProfile(data.user);
+      // 🔹 Save tokens
+      login(data.accessToken, data.refreshToken);
 
-      navigate("/");
+      // 🔹 Decode JWT → real user data
+      const decoded = decodeJwt(data.accessToken);
+
+      setUserProfile({
+        email: decoded.email,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+        username: decoded.username,
+        role: decoded.role,
+      });
+
+      navigate("/", { replace: true });
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {
@@ -51,11 +70,8 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* ===== Header ===== */}
         <div className="mb-6 text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-            <Activity size={22} />
-          </div>
           <h1 className="mt-4 text-2xl font-semibold text-gray-900">
-            Sign in
+            SomoLink
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             Access your network management dashboard
@@ -63,7 +79,7 @@ export default function Login() {
         </div>
 
         {/* ===== Card ===== */}
-        <div className="   p-6">
+        <div className="p-6">
           {error && (
             <div className="mb-4 text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
               {error}

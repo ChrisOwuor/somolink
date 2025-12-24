@@ -38,7 +38,7 @@ export default function SchoolPage() {
   if (!school) return <div className="p-6">School not found</div>;
 
   return (
-    <div className="h-[calc(100vh-4rem)] bg-gray-50 overflow-hidden">
+    <div className="h-[calc(100vh-3rem)] bg-gray-50 overflow-hidden">
       <div className="h-full max-w-7xl mx-auto px-6 flex flex-col">
         {/* ================= HEADER ================= */}
         <div className="shrink-0 pt-6">
