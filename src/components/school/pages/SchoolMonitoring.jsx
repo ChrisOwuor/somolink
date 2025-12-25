@@ -1,37 +1,34 @@
 import React, { useEffect, useState } from "react";
-import TrafficCard from "../school monitoring cards/TrafficCard";
+import ByteGraph from "../school monitoring cards/ByteGraph";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const MAX_POINTS = 180;
 
 export default function SchoolMonitoring() {
-  const [metrics, setMetrics] = useState({});
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const iface = "ether1"; // replace with your bridge
+    const iface = "ether1";
+
     const fetchTraffic = async () => {
       try {
         const res = await fetch(`${API_URL}/traffic/${iface}`);
-        const data = await res.json();
-        setMetrics(data);
-      } catch (err) {
-        console.error("Failed to fetch traffic:", err);
+        const sample = await res.json();
+
+        setData((prev) => {
+          const next = [...prev, sample];
+          return next.slice(-MAX_POINTS);
+        });
+      } catch (e) {
+        console.error("Traffic fetch failed", e);
       }
     };
 
-    fetchTraffic(); // initial fetch
-    const interval = setInterval(fetchTraffic, 3000); // poll every 3s
-
-    return () => clearInterval(interval);
+    fetchTraffic();
+    const id = setInterval(fetchTraffic, 1000); // WinBox refresh rate
+    return () => clearInterval(id);
   }, []);
 
-  return (
-    <div className="space-y-8">
-      <section>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">
-          Network Traffic
-        </h2>
-        <TrafficCard metrics={metrics} />
-      </section>
-    </div>
-  );
+  return <ByteGraph data={data} />;
 }
+
