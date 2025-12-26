@@ -8,62 +8,76 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTraffic } from "../../../context/TrafficProvider";
 
-const ByteGraph = ({ data }) => {
+const ByteGraph = () => {
+  const { data } = useTraffic();
+  const MAX_POINTS = 180; // Fixed window size
+
+  // FIX: Pre-fill the array to prevent "squeezing"
   const processedData = useMemo(() => {
-    return data.map((point, index) => ({
-      x: index,
-      rxKbps: (point.rxBps || 0) / 1000,
-      txKbps: (point.txBps || 0) / 1000,
-    }));
+    const buffer = new Array(MAX_POINTS).fill(null);
+    return buffer.map((_, index) => {
+      // Offset logic: aligns the latest data to the right
+      const dataIndex = index - (MAX_POINTS - data.length);
+      const point = data[dataIndex];
+      return {
+        x: index,
+        rxKbps: point ? (point.rxBps || 0) / 1000 : null,
+        txKbps: point ? (point.txBps || 0) / 1000 : null,
+      };
+    });
   }, [data]);
 
-  const MAX_SCALE = 500;
-  const TICKS = [0, 100, 200, 300, 400, 500];
+  const isHighTraffic = useMemo(() => {
+    return data.some((d) => d.rxBps / 1000 > 500 || d.txBps / 1000 > 500);
+  }, [data]);
+
+  const MAX_SCALE = isHighTraffic ? 5000 : 500;
+  const TICKS = isHighTraffic ? [0, 2500, 5000] : [0, 250, 500];
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-40 w-full bg-slate-50 border border-dashed border-slate-300 rounded flex items-center justify-center text-slate-400 text-xs italic">
-        Awaiting Interface Traffic...
+      <div className="h-40 w-full bg-gray-50 flex items-center justify-center text-[10px] text-gray-400">
+        Loading Router Stats...
       </div>
     );
   }
 
+  const latest = data[data.length - 1] || { rxBps: 0, txBps: 0 };
+
   return (
     <div
-      className="bg-[#fcfcfc] border  rounded overflow-hidden font-sans"
-      style={{ width: "100%", maxWidth: "480px" }} // Balanced width
+      className="bg-[#f4f4f4] border border-gray-300 rounded shadow-sm overflow-hidden font-sans"
+      style={{ width: "100%", maxWidth: "420px" }}
     >
-      {/* Sleek Header */}
-      <div className="bg-slate-100 px-3 py-2 border-b border-slate-200 flex justify-between items-center">
-        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tight">
-          Interface: ether1
+      {/* Simple Header */}
+      <div className="bg-gray-200/50 px-2 py-1.5 border-b border-gray-300 flex justify-between items-center">
+        <span className="text-[10px] font-bold text-gray-600 uppercase tracking-tight">
+          ether1 traffic
         </span>
-        <div className="flex gap-2">
-          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-          <span className="text-[10px] text-slate-400 font-mono uppercase">
-            Live
-          </span>
-        </div>
+        <span className="text-[9px] text-gray-400 font-mono">
+          {isHighTraffic ? "5M Scale" : "500k Scale"}
+        </span>
       </div>
 
-      {/* Main Chart Area */}
-      <div className="h-40 w-full bg-white relative px-1 pt-2 overflow-hidden">
+      {/* Chart Area */}
+      <div className="h-36 w-full bg-white relative px-1 pt-1 overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={processedData}
-            margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
+            margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
           >
             <CartesianGrid
               vertical={false}
-              stroke="#f1f5f9"
-              strokeDasharray="3 3"
+              stroke="#f0f0f0"
+              strokeDasharray="0"
             />
 
             <XAxis
               dataKey="x"
               type="number"
-              domain={["dataMin", "dataMax"]}
+              domain={[0, MAX_POINTS - 1]}
               hide
             />
 
@@ -71,79 +85,72 @@ const ByteGraph = ({ data }) => {
               orientation="right"
               domain={[0, MAX_SCALE]}
               ticks={TICKS}
-              tick={{ fontSize: 9, fill: "#94a3b8", fontWeight: 500 }}
-              tickFormatter={(val) => (val === 0 ? "0" : `${val}k`)}
-              width={40}
+              tick={{ fontSize: 9, fill: "#999" }}
+              tickFormatter={(val) =>
+                val === 0
+                  ? "0"
+                  : `${val >= 1000 ? val / 1000 + "M" : val + "k"}`
+              }
+              width={35}
               axisLine={false}
               tickLine={false}
             />
 
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(30, 41, 59, 0.9)",
-                border: "none",
-                borderRadius: "4px",
-                padding: "6px",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                border: "1px solid #ccc",
+                borderRadius: "2px",
+                fontSize: "10px",
+                padding: "4px",
               }}
-              itemStyle={{ fontSize: "10px", color: "#fff", padding: "2px 0" }}
+              cursor={{ stroke: "#ddd", strokeWidth: 1 }}
               labelStyle={{ display: "none" }}
-              formatter={(val, name) => [
-                `${val.toFixed(1)} kbps`,
-                name === "txKbps" ? "Upload" : "Download",
-              ]}
+              formatter={(val) => [`${val.toFixed(1)} kbps`]}
             />
 
-            {/* Upload (Tx) - Blue Wave */}
             <Area
               isAnimationActive={false}
               type="monotone"
               dataKey="txKbps"
-              stroke="#2563eb"
-              strokeWidth={2}
+              stroke="#0066cc"
               fill="transparent"
+              strokeWidth={1.5}
             />
-
-            {/* Download (Rx) - Green Wave */}
             <Area
               isAnimationActive={false}
               type="monotone"
               dataKey="rxKbps"
-              stroke="#16a34a"
-              strokeWidth={2}
+              stroke="#22ad00"
               fill="transparent"
+              strokeWidth={1.5}
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Styled Values Footer */}
-      <div className="grid grid-cols-2 border-t border-slate-200 bg-white">
-        <div className="p-3 border-r border-slate-100 flex flex-col items-center justify-center">
-          <span className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">
-            Tx (Upload)
+      {/* Centered Baseline Legend */}
+      <div className="flex items-center justify-center gap-8 py-2 bg-white border-t border-gray-200">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[9px] font-bold text-gray-400 uppercase">
+            Tx:
           </span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-sm font-mono font-bold text-blue-600">
-              {(processedData[processedData.length - 1]?.txKbps || 0).toFixed(
-                1
-              )}
-            </span>
-            <span className="text-[10px] text-slate-400 font-medium">kbps</span>
-          </div>
+          <span className="text-xs font-mono font-bold text-blue-600">
+            {(latest.txBps / 1000).toFixed(1)}
+          </span>
+          <span className="text-[9px] text-gray-400">kbps</span>
         </div>
 
-        <div className="p-3 flex flex-col items-center justify-center">
-          <span className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">
-            Rx (Download)
+        <div className="w-[1px] h-3 bg-gray-200"></div>
+
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[9px] font-bold text-gray-400 uppercase">
+            Rx:
           </span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-sm font-mono font-bold text-green-600">
-              {(processedData[processedData.length - 1]?.rxKbps || 0).toFixed(
-                1
-              )}
-            </span>
-            <span className="text-[10px] text-slate-400 font-medium">kbps</span>
-          </div>
+          <span className="text-xs font-mono font-bold text-green-600">
+            {(latest.rxBps / 1000).toFixed(1)}
+          </span>
+          <span className="text-[9px] text-gray-400">kbps</span>
         </div>
       </div>
     </div>

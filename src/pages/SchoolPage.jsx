@@ -81,7 +81,7 @@ export default function SchoolPage() {
 
           {/* ================= NAV TABS ================= */}
           <nav className="mt-6 flex gap-6">
-            {["overview", "monitoring", "configuration", "users","devices", "wlan", "hotspot"].map((tab) => (
+            {[ "monitoring", "configuration", "users","devices", "wlan", "hotspot"].map((tab) => (
               <NavLink
                 key={tab}
                 to={`/school/${id}/${tab}`}

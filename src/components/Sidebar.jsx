@@ -55,7 +55,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             Schools
           </NavLink>
           <NavLink
-            to="/fianance"
+            to="/finance"
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
@@ -80,10 +80,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-100"
               onClick={() => setSidebarOpen(false)}
             >
+              <User className="w-6 h-6 text-gray-600" />
               <div className="leading-tight">
                 <p className="text-sm font-semibold">{user.username}</p>
                 <p className="text-xs text-gray-500">{user.role}</p>
-                <p className="text-xs text-gray-400">{user.email}</p>
               </div>
             </NavLink>
 

@@ -25,7 +25,9 @@ import OpenWlan from "./components/school/pages/OpenWlan";
 import Hotspot from "./components/school/pages/Hotspot";
 import NetworkConfiguration from "./components/school/pages/NetworkConfiguration";
 import PrivateRoute from "./utils/PrivateRoute";
-
+import FinancePage from "./pages/FinancePage";
+import Revenue from "./components/finance/pages/Revenue";
+import Transactions from "./components/finance/pages/Transactions";
 
 export default function App() {
   return (
@@ -50,9 +52,9 @@ export default function App() {
 
               {/* SCHOOL ROUTES */}
               <Route path="/school/:id" element={<SchoolPage />}>
-                <Route index element={<Navigate to="overview" replace />} />
+                <Route index element={<Navigate to="monitoring" replace />} />
 
-                <Route path="overview" element={<SchoolOverview />} />
+                {/* <Route path="overview" element={<SchoolOverview />} /> */}
                 <Route path="monitoring" element={<SchoolMonitoring />} />
                 <Route
                   path="configuration"
@@ -62,6 +64,11 @@ export default function App() {
                 <Route path="devices" element={<SchoolDevices />} />
                 <Route path="wlan" element={<OpenWlan />} />
                 <Route path="hotspot" element={<Hotspot />} />
+              </Route>
+              <Route path="/finance" element={<FinancePage />}>
+                <Route index element={<Navigate to="transactions" replace />} />
+                <Route path="revenue" element={<Revenue />} />
+                <Route path="transactions" element={<Transactions />} />
               </Route>
             </Route>
           </Route>

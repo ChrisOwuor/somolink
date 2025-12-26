@@ -3,6 +3,7 @@ import PackagesCard from "../components/settings/PackagesCard";
 import Drawer from "../components/common/Drawer";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import ProfilesCard from "../components/settings/ProfilesCard";
+import MikrotikConfigCard from "../components/settings/MikrotikConfigCard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -104,6 +105,28 @@ export default function Settings() {
               <div className="p-4 space-y-4">
                 {/* Replace with your ServerProfileCard component */}
                 <ProfilesCard />
+              </div>
+            )}
+          </div>
+          <div className="bg-white rounded">
+            <button
+              className="w-full flex justify-between items-center px-4 py-3 text-left text-sm font-semibold text-gray-700 rounded-t"
+              onClick={() => toggleAccordion("mikrotik")}
+            >
+              <span>Mikrotik File Upload</span>
+              <span>
+                {activeAccordion === "mikrotik" ? (
+                  <ChevronUp />
+                ) : (
+                  <ChevronDown />
+                )}
+              </span>
+            </button>
+
+            {activeAccordion === "mikrotik" && (
+              <div className="p-4 space-y-4">
+                {/* Replace with your ServerProfileCard component */}
+                <MikrotikConfigCard />
               </div>
             )}
           </div>

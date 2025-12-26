@@ -95,7 +95,7 @@ const Schools = () => {
 
   return (
     <div className="bg-gray-50 flex justify-center items-start min-h-screen">
-      <div className="max-w-7xl w-full bg-white overflow-hidden flex flex-col h-[90vh]">
+      <div className="max-w-7xl w-full bg-gray-50 overflow-hidden flex flex-col h-[90vh]">
         {/* Header */}
         <div className="px-6 py-4 flex items-center justify-between ">
           <h2 className="text-xl font-semibold text-gray-900">Schools</h2>
