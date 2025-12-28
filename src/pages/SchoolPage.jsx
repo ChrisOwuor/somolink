@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, NavLink, Outlet } from "react-router-dom";
 import { ArrowLeft, MapPin, Hash, Activity } from "lucide-react";
 import { useSchool } from "../context/SchoolContext";
+import SomolinkLoader from "../components/loaders/SomolinkLoader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,7 +35,9 @@ export default function SchoolPage() {
     fetchSchool();
   }, [id, setSchool]);
 
-  if (loading) return <div className="p-6">Loading school...</div>;
+  if (loading) return <div className="p-6">
+    <SomolinkLoader/>
+  </div>;
   if (!school) return <div className="p-6">School not found</div>;
 
   return (

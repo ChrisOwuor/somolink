@@ -27,7 +27,10 @@ import NetworkConfiguration from "./components/school/pages/NetworkConfiguration
 import PrivateRoute from "./utils/PrivateRoute";
 import FinancePage from "./pages/FinancePage";
 import Revenue from "./components/finance/pages/Revenue";
-import Transactions from "./components/finance/pages/Transactions";
+import Transactions from "./pages/Transactions";
+import TransactionsPage from "./pages/Transactions";
+import MonthlyRevenue from "./components/finance/pages/MonthlyRevenue";
+import YearlyRevenue from "./components/finance/pages/YearlyRevenue";
 
 export default function App() {
   return (
@@ -65,10 +68,15 @@ export default function App() {
                 <Route path="wlan" element={<OpenWlan />} />
                 <Route path="hotspot" element={<Hotspot />} />
               </Route>
+              <Route path="/transactions" element={<TransactionsPage />} />
+
               <Route path="/finance" element={<FinancePage />}>
-                <Route index element={<Navigate to="transactions" replace />} />
-                <Route path="revenue" element={<Revenue />} />
-                <Route path="transactions" element={<Transactions />} />
+                <Route
+                  index
+                  element={<Navigate to="monthly/revenue" replace />}
+                />
+                <Route path="monthly/revenue" element={<MonthlyRevenue />} />
+                <Route path="yearly/revenue" element={<YearlyRevenue />} />
               </Route>
             </Route>
           </Route>

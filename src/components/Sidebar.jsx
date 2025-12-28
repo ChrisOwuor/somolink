@@ -1,19 +1,26 @@
 import { NavLink } from "react-router-dom";
-import { User, LogOut } from "lucide-react";
+import {
+  User,
+  LogOut,
+  Home,
+  Building,
+  CreditCard,
+  FileText,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useUser } from "../context/UserContext";
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const { logout } = useAuth();
   const { user } = useUser();
+
   const linkClass = ({ isActive }) =>
-    `block py-3 px-6 rounded hover:bg-indigo-100 hover:text-indigo-700 transition ${
+    `flex items-center gap-2 py-3 px-6 rounded hover:bg-indigo-100 hover:text-indigo-700 transition ${
       isActive ? "bg-indigo-50 text-indigo-700 font-semibold" : "text-gray-700"
     }`;
 
-  const handleLogout = () => {
-    logout();
-  };
+  const handleLogout = () => logout();
 
   return (
     <>
@@ -44,7 +51,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
-            Dashboard
+            <Home className="w-4 h-4" /> Dashboard
           </NavLink>
 
           <NavLink
@@ -52,14 +59,23 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
-            Schools
+            <Building className="w-4 h-4" /> Schools
           </NavLink>
+
           <NavLink
             to="/finance"
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
-            Finance
+            <CreditCard className="w-4 h-4" /> Finance
+          </NavLink>
+
+          <NavLink
+            to="/transactions"
+            className={linkClass}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <FileText className="w-4 h-4" /> Transactions
           </NavLink>
 
           <NavLink
@@ -67,14 +83,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             className={linkClass}
             onClick={() => setSidebarOpen(false)}
           >
-            Settings
+            <Settings className="w-4 h-4" /> Settings
           </NavLink>
         </nav>
 
         {/* USER + LOGOUT (BOTTOM) */}
         {user && (
           <div className="border-t border-gray-200 p-4 space-y-3">
-            {/* Profile */}
             <NavLink
               to="/profile"
               className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-100"
@@ -87,7 +102,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               </div>
             </NavLink>
 
-            {/* Logout */}
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded hover:bg-red-50 transition"
