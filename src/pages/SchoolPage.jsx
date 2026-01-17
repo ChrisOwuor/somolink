@@ -6,7 +6,11 @@ import SomolinkLoader from "../components/loaders/SomolinkLoader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function SchoolPage() {
+
+
+export default function SchoolPage () {
+  
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -35,9 +39,13 @@ export default function SchoolPage() {
     fetchSchool();
   }, [id, setSchool]);
 
-  if (loading) return <div className="p-6">
-    <SomolinkLoader/>
-  </div>;
+  if (loading) return (
+    <div className="p-6">
+      <p colSpan="4" className="text-center py-6 text-gray-500">
+        Loading...
+      </p>{" "}
+    </div>
+  );
   if (!school) return <div className="p-6">School not found</div>;
 
   return (

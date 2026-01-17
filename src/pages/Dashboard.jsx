@@ -7,6 +7,10 @@ import {
   Users,
   Laptop,
 } from "lucide-react";
+import ByteGraph from "../components/school/school monitoring cards/ByteGraph";
+import SchoolMonitoring from "../components/school/pages/SchoolMonitoring";
+import DownlinkMonitoring from "../components/dashboard/DownlinkMonitoring";
+import UplinkMonitoring from "../components/dashboard/UplinkMonitoring";
 
 const mockSchools = [
   { id: 1, name: "Greenwood High", active: true, traffic: 120 },
@@ -38,22 +42,6 @@ export default function Dashboard() {
   const activeHotspots = 10;
   const activeUsers = 87;
   const connectedDevices = 56;
-
-  const uplinkTraffic = [
-    { label: "00:00", value: 20 },
-    { label: "01:00", value: 35 },
-    { label: "02:00", value: 28 },
-    { label: "03:00", value: 40 },
-    { label: "04:00", value: 25 },
-  ];
-
-  const downlinkTraffic = [
-    { label: "00:00", value: 15 },
-    { label: "01:00", value: 28 },
-    { label: "02:00", value: 22 },
-    { label: "03:00", value: 33 },
-    { label: "04:00", value: 20 },
-  ];
 
   return (
     <div className="p-4 md:p-6 space-y-6 bg-gray-50">
@@ -89,18 +77,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Graphs take more space */}
         <div className="lg:col-span-2">
-          <GraphCard
-            title="Uplink Traffic"
-            data={uplinkTraffic}
-            color="#10b981"
-          />
+          <GraphCard1 title="Uplink Traffic" color="#10b981" />
         </div>
         <div className="lg:col-span-2">
-          <GraphCard
-            title="Downlink Traffic"
-            data={downlinkTraffic}
-            color="#3b82f6"
-          />
+          <GraphCard2 title="Downlink Traffic" color="#3b82f6" />
         </div>
       </div>
 
@@ -148,14 +128,14 @@ function StatCard({ icon: Icon, label, value, sub }) {
   );
 }
 
-function GraphCard({ title, data, color }) {
+function GraphCard1({ title, data = true }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4">
       <h3 className="text-sm font-semibold text-gray-700 mb-2">{title}</h3>
       {data ? (
         <div className="h-32 md:h-40 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">
           {/* Here you can integrate recharts if needed */}
-          Chart Placeholder
+          <UplinkMonitoring />
         </div>
       ) : (
         <div className="text-center py-8 text-gray-400">Loading...</div>
@@ -163,7 +143,21 @@ function GraphCard({ title, data, color }) {
     </div>
   );
 }
-
+function GraphCard2({ title, data = true }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-gray-700 mb-2">{title}</h3>
+      {data ? (
+        <div className="h-32 md:h-40 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">
+          {/* Here you can integrate recharts if needed */}
+          <DownlinkMonitoring />
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-400">Loading...</div>
+      )}
+    </div>
+  );
+}
 function StatusItem({ label, value, color }) {
   const textColor =
     color === "green"

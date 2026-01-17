@@ -69,6 +69,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           >
             <CreditCard className="w-4 h-4" /> Finance
           </NavLink>
+       
 
           <NavLink
             to="/transactions"

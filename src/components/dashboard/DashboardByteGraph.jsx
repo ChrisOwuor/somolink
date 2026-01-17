@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import {
   AreaChart,
@@ -8,10 +9,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useTraffic } from "../../../context/TrafficProvider";
 
-const ByteGraph = () => {
-  const { data } = useTraffic();
+const DashboardByteGraph = ({data}) => {
+ 
   const MAX_POINTS = 180; // Fixed window size
 
   // FIX: Pre-fill the array to prevent "squeezing"
@@ -38,7 +38,7 @@ const ByteGraph = () => {
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-40 w-full bg-gray-50 flex items-center justify-center text-[10px] text-gray-400">
+      <div className="h-max w-full bg-gray-50 flex items-center justify-center text-[10px] text-gray-400">
         Loading Router Stats...
       </div>
     );
@@ -48,18 +48,9 @@ const ByteGraph = () => {
 
   return (
     <div
-      className="bg-[#f4f4f4] border border-gray-300 rounded shadow-sm overflow-hidden font-sans"
-      style={{ width: "100%", maxWidth: "420px" }}
+      className="bg-[#f4f4f4] border-gray-300 rounded h-max w-full  overflow-hidden font-sans"
     >
-      {/* Simple Header */}
-      <div className="bg-gray-200/50 px-2 py-1.5 border-b border-gray-300 flex justify-between items-center">
-        <span className="text-[10px] font-bold text-gray-600 uppercase tracking-tight">
-          ether1 trafficj
-        </span>
-        <span className="text-[9px] text-gray-400 font-mono">
-          {isHighTraffic ? "5M Scale" : "500k Scale"}
-        </span>
-      </div>
+      
 
       {/* Chart Area */}
       <div className="h-36 w-full bg-white relative px-1 pt-1 overflow-hidden">
@@ -157,4 +148,4 @@ const ByteGraph = () => {
   );
 };
 
-export default ByteGraph;
+export default DashboardByteGraph;
