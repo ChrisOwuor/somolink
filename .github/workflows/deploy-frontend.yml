@@ -4,33 +4,25 @@ on:
   push:
     branches:
       - master
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout frontend code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '23.x'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
-        working-directory: ./frontend
 
-      # Step 4: Build frontend
       - name: Build Vue app
         run: npm run build
-        working-directory: ./frontend
 
-      # Step 5: Copy dist folder to VM
       - name: Copy dist to VM
         uses: appleboy/scp-action@v0.1.5
         with:
@@ -38,10 +30,9 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_SSH_PORT }}
-          source: frontend/dist/
+          source: dist/
           target: ${{ secrets.VM_FRONTEND_PATH }}
 
-      # Step 6: Run deploy script on VM
       - name: Run deploy script
         uses: appleboy/ssh-action@v0.1.7
         with:
