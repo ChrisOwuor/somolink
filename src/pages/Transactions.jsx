@@ -17,6 +17,7 @@ export default function Transactions() {
   const [totalTransactions, setTotalTransactions] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
   // ================= Fetch Transactions =================
   useEffect(() => {
     async function fetchTransactions() {
@@ -28,7 +29,7 @@ export default function Transactions() {
           search,
           status: statusFilter,
         });
-        const res = await fetch(`http://localhost:8990/api/payments?${query}`);
+        const res = await fetch(`${API_URL}/api/payments?${query}`);
         const data = await res.json();
 
         setTransactions(data.transactions || []);
