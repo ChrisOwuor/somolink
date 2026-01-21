@@ -11,6 +11,7 @@ import ByteGraph from "../components/school/school monitoring cards/ByteGraph";
 import SchoolMonitoring from "../components/school/pages/SchoolMonitoring";
 import DownlinkMonitoring from "../components/dashboard/DownlinkMonitoring";
 import UplinkMonitoring from "../components/dashboard/UplinkMonitoring";
+import RouterDiagram from "../components/dashboard/RouterDiagram ";
 
 const mockSchools = [
   { id: 1, name: "Greenwood High", active: true, traffic: 120 },
@@ -18,22 +19,6 @@ const mockSchools = [
   { id: 3, name: "Hilltop School", active: false, traffic: 60 },
   { id: 4, name: "Maple Leaf", active: true, traffic: 80 },
 ];
-
-const mockDevices = [
-  { id: 1, name: "Laptop – Windows", online: true },
-  { id: 2, name: "Phone – Android", online: false },
-  { id: 3, name: "Tablet – iPad", online: true },
-  { id: 4, name: "Laptop – Mac", online: true },
-];
-
-const mockRouter = {
-  online: true,
-  power: "ON",
-  ram: "45%",
-  cpu: "32%",
-  uplink: 180,
-  downlink: 210,
-};
 
 export default function Dashboard() {
   const totalSchools = mockSchools.length;
@@ -85,7 +70,9 @@ export default function Dashboard() {
       </div>
 
       {/* Router Status — full width */}
-     
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <RouterDiagram />
+      </div>
     </div>
   );
 }
@@ -138,8 +125,8 @@ function StatusItem({ label, value, color }) {
     color === "green"
       ? "text-green-500"
       : color === "red"
-      ? "text-red-500"
-      : "text-gray-700";
+        ? "text-red-500"
+        : "text-gray-700";
   return (
     <div className={`bg-gray-50 p-2 rounded text-center ${textColor}`}>
       <div className="font-medium">{label}</div>
