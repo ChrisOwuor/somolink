@@ -85,32 +85,7 @@ export default function Dashboard() {
       </div>
 
       {/* Router Status — full width */}
-      <div className="grid grid-cols-1">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
-              <Server size={16} /> Main Router Status
-            </h3>
-            <button className="text-indigo-600 text-sm">Configure</button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
-            <StatusItem
-              label="Online"
-              value={mockRouter.online ? "Yes" : "No"}
-              color={mockRouter.online ? "green" : "red"}
-            />
-            <StatusItem label="Power" value={mockRouter.power} />
-            <StatusItem label="RAM Usage" value={mockRouter.ram} />
-            <StatusItem label="CPU Usage" value={mockRouter.cpu} />
-            <StatusItem label="Uplink" value={`${mockRouter.uplink} Mbps`} />
-            <StatusItem
-              label="Downlink"
-              value={`${mockRouter.downlink} Mbps`}
-            />
-          </div>
-        </div>
-      </div>
+     
     </div>
   );
 }
