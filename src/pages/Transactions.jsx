@@ -29,7 +29,7 @@ export default function Transactions() {
           search,
           status: statusFilter,
         });
-        const res = await fetch(`${API_URL}/api/payments?${query}`);
+        const res = await fetch(`${API_URL}/payments?${query}`);
         const data = await res.json();
 
         setTransactions(data.transactions || []);
