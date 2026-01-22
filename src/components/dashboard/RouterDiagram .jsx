@@ -165,7 +165,7 @@ export default function RouterDiagram() {
               </span>
             </div>
 
-            <button
+            {!["pppoe-out1","lo","bridge","sfp-sfpplus1","ether1"].includes(drawerPort.name)  && <button
               onClick={() => togglePort(drawerPort)}
               disabled={loading}
               className="w-full bg-indigo-600 text-white py-2 rounded text-sm disabled:opacity-50"
@@ -177,7 +177,7 @@ export default function RouterDiagram() {
                 : drawerPort.disabled === "true"
                 ? "Enable Port"
                 : "Disable Port"}
-            </button>
+            </button>}
           </div>
         </Drawer>
       )}
