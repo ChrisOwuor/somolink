@@ -8,9 +8,9 @@ export default function RouterDiagram() {
   const [drawerPort, setDrawerPort] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL; // e.g. http://localhost:8080
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch interfaces from backend
+  // Fetch interfaces from backend (RAW strings)
   const fetchInterfaces = async () => {
     try {
       const res = await fetch(`${API_URL}/network/router/interfaces`);
@@ -28,20 +28,24 @@ export default function RouterDiagram() {
     return () => clearInterval(interval);
   }, []);
 
-  // Enable or disable a port using path variable
+  // Enable / Disable using ADMIN state only
   const togglePort = async (port) => {
     setLoading(true);
     try {
-      const action = port.running ? "disable" : "enable";
-      await fetch(`${API_URL}/network/interface/${port.name}/${action}`, {
-        method: "POST",
-      });
-      await fetchInterfaces(); // refresh after action
+      const action =
+        port.disabled === "true" ? "enable" : "disable";
+
+      await fetch(
+        `${API_URL}/network/interface/${port.name}/${action}`,
+        { method: "POST" }
+      );
+
+      await fetchInterfaces();
     } catch (err) {
       console.error(`Error toggling port ${port.name}:`, err);
     } finally {
       setLoading(false);
-      setDrawerPort(null); // close drawer after action
+      setDrawerPort(null);
     }
   };
 
@@ -50,9 +54,28 @@ export default function RouterDiagram() {
       <div className="flex flex-col md:flex-row gap-4 w-full col-span-4">
         {/* Ports Container */}
         <div className="flex-1 min-w-0 bg-white border border-gray-200 rounded-lg p-4 shadow-inner overflow-x-auto">
-          <h3 className="text-gray-700 font-semibold mb-3 flex items-center gap-2">
-            <Cpu size={14} /> Router Ports
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-gray-700 font-semibold flex items-center gap-2">
+              <Cpu size={14} /> Router Ports
+            </h3>
+
+            {/* LED Legend */}
+            <div className="flex items-center gap-3 text-[10px] text-gray-600">
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                <span>Up</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                <span>Down</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                <span>Disabled</span>
+              </div>
+            </div>
+          </div>
+
           <div className="flex gap-4">
             {interfaces.map((port) => (
               <div
@@ -70,11 +93,11 @@ export default function RouterDiagram() {
                   {/* LED */}
                   <div
                     className={`absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full ${
-                      port.disabled==="true"
-                        ? "bg-yellow-500" // disabled
-                        : port.running
-                          ? "bg-green-500" // running
-                          : "bg-red-500" // down
+                      port.disabled === "true"
+                        ? "bg-yellow-500"
+                        : port.running === "true"
+                        ? "bg-green-500"
+                        : "bg-red-500"
                     }`}
                   />
                 </div>
@@ -100,19 +123,45 @@ export default function RouterDiagram() {
         >
           <div className="bg-white rounded p-4 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 font-semibold">Type:</span>
-              <span className="text-sm text-gray-800">{drawerPort.type}</span>
+              <span className="text-sm text-gray-500 font-semibold">
+                Type:
+              </span>
+              <span className="text-sm text-gray-800">
+                {drawerPort.type}
+              </span>
             </div>
+
+            {/* Admin State */}
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 font-semibold">
-                Status:
+                Admin State:
               </span>
               <span
                 className={`text-sm font-medium ${
-                  drawerPort.running ? "text-green-600" : "text-red-600"
+                  drawerPort.disabled === "false"
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
-                {drawerPort.running ? "Enabled" : "Disabled"}
+                {drawerPort.disabled === "false"
+                  ? "Enabled"
+                  : "Disabled"}
+              </span>
+            </div>
+
+            {/* Link State */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500 font-semibold">
+                Link State:
+              </span>
+              <span
+                className={`text-sm font-medium ${
+                  drawerPort.running === "true"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {drawerPort.running === "true" ? "Up" : "Down"}
               </span>
             </div>
 
@@ -122,12 +171,12 @@ export default function RouterDiagram() {
               className="w-full bg-indigo-600 text-white py-2 rounded text-sm disabled:opacity-50"
             >
               {loading
-                ? drawerPort.running
-                  ? "Disabling..."
-                  : "Enabling..."
-                : drawerPort.running
-                  ? "Disable Port"
-                  : "Enable Port"}
+                ? drawerPort.disabled === "true"
+                  ? "Enabling..."
+                  : "Disabling..."
+                : drawerPort.disabled === "true"
+                ? "Enable Port"
+                : "Disable Port"}
             </button>
           </div>
         </Drawer>
